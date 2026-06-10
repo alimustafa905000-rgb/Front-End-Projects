@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduFeedback — Anonymous Teacher Feedback</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- TOP BAR — No admin button visible to students -->
+    <div class="topbar">
+        <a class="topbar-brand" onclick="goHome()" href="#">
+            <span>🎓</span><span>EduFeedback</span>
+            <div class="live-dot"></div>
+        </a>
+    </div>
+
+
+    <div class="page active" id="page-home">
+        <div class="home-hero">
+            <h1>Rate Your Teachers <em>Anonymously</em></h1>
+            <p>Your honest feedback helps improve teaching quality. We never collect your name or any personal data.</p>
+            <div class="anon-badge">🔒 100% Anonymous — No identity stored, ever</div>
+        </div>
+        <div class="section-wrap">
+            <div class="section-heading">Choose Your Department</div>
+            <div class="section-sub">Select the department whose teachers you want to rate.</div>
+            <div class="dept-grid" id="deptGrid"></div>
+        </div>
+    </div>
+ 
+    <div class="page" id="page-teachers">
+        <div class="section-wrap">
+            <div class="breadcrumb" id="bc-teachers"></div>
+            <div class="section-heading" id="teachers-title">Teachers</div>
+            <div class="section-sub">Click on a teacher to leave your anonymous feedback.</div>
+            <div class="teacher-grid" id="teacherGrid"></div>
+        </div>
+    </div>
+
+   
+    <div class="page" id="page-feedback">
+        <div class="feedback-layout">
+            <div class="breadcrumb" id="bc-feedback"></div>
+            <div class="teacher-profile-card" id="teacherProfileCard"></div>
+            <div class="anon-note">🔒 Your feedback is 100% anonymous. No name, roll number, or device info is ever
+                saved.</div>
+            <div class="form-card">
+                <h3>Submit Your Feedback</h3>
+                <p class="form-sub">Be honest — your feedback is private and helps teachers improve.</p>
+
+                
+                <div class="form-section">
+                    <label class="form-label">Overall Rating <span style="color:var(--danger)">*</span></label>
+                    <div class="star-row" id="overallStars"></div>
+                    <div class="star-hint" id="starHint">Tap a star to rate</div>
+                </div>
+ 
+                <div class="form-section">
+                    <label class="form-label">Rate Specific Aspects <span
+                            style="font-weight:400;color:var(--muted)">(optional)</span></label>
+                    <div class="aspect-table">
+                        <div class="aspect-row">
+                            <span class="aspect-label">Teaching Clarity</span>
+                            <div class="mini-star-row" data-aspect="clarity"></div>
+                        </div>
+                        <div class="aspect-row">
+                            <span class="aspect-label">Subject Knowledge</span>
+                            <div class="mini-star-row" data-aspect="knowledge"></div>
+                        </div>
+                        <div class="aspect-row">
+                            <span class="aspect-label">Punctuality</span>
+                            <div class="mini-star-row" data-aspect="punctuality"></div>
+                        </div>
+                        <div class="aspect-row">
+                            <span class="aspect-label">Student Engagement</span>
+                            <div class="mini-star-row" data-aspect="engagement"></div>
+                        </div>
+                        <div class="aspect-row">
+                            <span class="aspect-label">Fair Assessment</span>
+                            <div class="mini-star-row" data-aspect="fairness"></div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div class="form-section" style="margin-bottom:1.5rem;">
+                    <label class="form-label">Written Comment <span
+                            style="font-weight:400;color:var(--muted)">(optional)</span></label>
+                    <textarea class="comment-box" id="commentBox" maxlength="500"
+                        placeholder="Share your honest thoughts about this teacher..."
+                        oninput="updateCharCount()"></textarea>
+                    <div class="char-count"><span id="charCount">0</span>/500</div>
+                </div>
+
+                <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Anonymous Feedback →</button>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="page" id="page-success">
+        <div class="success-screen">
+            <div class="success-icon">✅</div>
+            <h2>Thank You!</h2>
+            <p>Your anonymous feedback has been recorded. It will help improve teaching quality. Your identity is
+                completely protected.</p>
+            <button class="btn btn-primary" onclick="goHome()">Rate Another Teacher</button>
+        </div>
+    </div>
+
+
+    <div class="page" id="page-adminLogin">
+        <div class="admin-login-wrap">
+            <div class="lock-icon">🔐</div>
+            <h2>Admin Access</h2>
+            <p class="sub">This panel is restricted. Enter your credentials to continue.</p>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="al-user" placeholder="Enter username" />
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="al-pass" placeholder="Enter password"
+                    onkeydown="if(event.key==='Enter')doLogin()" />
+                <div class="input-error" id="loginErr">Incorrect username or password.</div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="doLogin()">Login</button>
+            <button class="btn btn-outline btn-full" style="margin-top:0.75rem;" onclick="goHome()">← Back to
+                Site</button>
+        </div>
+    </div>
+
+
+    <div class="page" id="page-adminDash">
+        <div class="admin-wrap">
+            <div class="admin-toprow">
+                <div>
+                    <div class="admin-title">📊 Admin Dashboard</div>
+                    <div class="admin-sub">Manage teachers &amp; view all anonymous feedback</div>
+                </div>
+                <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                    <button class="btn btn-outline btn-sm" onclick="goHome()">← View Site</button>
+                    <button class="btn btn-danger btn-sm" onclick="doLogout()">Logout</button>
+                </div>
+            </div>
+            <div class="stats-grid" id="adminStats"></div>
+            <div class="tab-bar">
+                <button class="tab-btn active" id="tab-btn-fb" onclick="switchTab('fb')">All Feedback</button>
+                <button class="tab-btn" id="tab-btn-mgmt" onclick="switchTab('mgmt')">Manage Teachers</button>
+                <button class="tab-btn" id="tab-btn-add" onclick="switchTab('add')">+ Add Teacher</button>
+            </div>
+
+
+            <div id="tab-fb">
+                <div class="filter-bar">
+                    <select id="f-dept" onchange="renderFbList()">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select id="f-teacher" onchange="renderFbList()">
+                        <option value="">All Teachers</option>
+                    </select>
+                    <select id="f-sort" onchange="renderFbList()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="high">Highest Rating</option>
+                        <option value="low">Lowest Rating</option>
+                    </select>
+                    <button class="btn btn-danger btn-sm" onclick="clearAllFeedback()">🗑 Clear All</button>
+                </div>
+                <div class="feedback-list" id="fbList"></div>
+            </div>
+
+            <div id="tab-mgmt" style="display:none;">
+                <div class="mgmt-grid" id="mgmtGrid"></div>
+            </div>
+
+            <!-- ADD TEACHER TAB -->
+            <div id="tab-add" style="display:none;">
+                <div class="add-form-wrap">
+                    <h3>Add New Teacher</h3>
+                    <div class="form-row-2">
+                        <div class="input-group"><label>Full Name *</label><input type="text" id="nt-name"
+                                placeholder="e.g. Dr. Ayesha Tariq"></div>
+                        <div class="input-group">
+                            <label>Department *</label>
+                            <select id="nt-dept">
+                                <option value="">— Select —</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group"><label>Subject *</label><input type="text" id="nt-subject"
+                            placeholder="e.g. Data Structures"></div>
+                    <div class="input-group"><label>Photo URL <span style="font-weight:400;color:var(--muted)">(paste a
+                                link to any image)</span></label><input type="text" id="nt-photo"
+                            placeholder="https://example.com/photo.jpg"></div>
+                    <div class="input-group"><label>Short Bio <span
+                                style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text"
+                            id="nt-bio" placeholder="e.g. PhD, 10 years experience"></div>
+                    <button class="btn btn-success" onclick="addTeacher()">Add Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-bg" id="editModal">
+        <div class="modal-box">
+            <h3>✏️ Edit Teacher</h3>
+            <input type="hidden" id="e-id">
+            <div class="input-group"><label>Full Name</label><input type="text" id="e-name"></div>
+            <div class="input-group"><label>Department</label><select id="e-dept"></select></div>
+            <div class="input-group"><label>Subject</label><input type="text" id="e-subject"></div>
+            <div class="input-group"><label>Photo URL</label><input type="text" id="e-photo" placeholder="https://...">
+            </div>
+            <div class="input-group"><label>Short Bio</label><input type="text" id="e-bio"></div>
+            <div style="display:flex;gap:0.75rem;margin-top:1.25rem;">
+                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
